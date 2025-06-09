@@ -11,22 +11,30 @@ class ImageCompressor(object):
         
     def BlockAveraging(self,image_filename):
         """Method for image compression based on Block Averaging Algorithm"""
-        N = 3
+        N = 5
         pixel_matrix = cv2.imread(self.original_path+image_filename)
         l_lim,w_lim,c_lim = list(pixel_matrix.shape)
+        
+        n_pixels_in_row_compressed,n_pixels_in_col_compressed = int((w_lim - w_lim % N) / N),int((l_lim - l_lim % N) / N)
+        
         pixel_matrix = cv2.split(pixel_matrix)
+        
+        compressed_picture = [[],[],[]]
+        
         #Divide picture into equal blocks (N by N size)
         for channel in range(len(pixel_matrix)):
             block_y_coord,block_x_coord = [0,0]
             while block_y_coord + N <= l_lim:
                 block_x_coord = 0
+                compressed_picture[channel].append([])
                 while block_x_coord + N <= w_lim:
-                    #Take the average color value of each block and substitute values around the block by its average.
-                    pixel_matrix[channel][block_y_coord:block_y_coord + N,block_x_coord:block_x_coord + N] = round(np.mean(pixel_matrix[channel][block_y_coord:block_y_coord + N,block_x_coord:block_x_coord + N]))
+                    #Take the average pixel value of each block.
+                    #Create new pixel for the compressed copy, based on the average pixel value of the block and its location in a relation to other blocks.
+                    compressed_picture[channel][len(compressed_picture[channel]) - 1].append(round(np.mean(pixel_matrix[channel][block_y_coord:block_y_coord + N,block_x_coord:block_x_coord + N])))
                     block_x_coord+=N
                 block_y_coord+=N
 
-        merged = cv2.merge(np.array(pixel_matrix))
+        merged = cv2.merge(np.array(compressed_picture))
         #Save it
         cv2.imwrite(self.compression_path+"\\"+image_filename,merged)
         
