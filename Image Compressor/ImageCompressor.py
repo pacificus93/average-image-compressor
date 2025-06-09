@@ -21,7 +21,7 @@ class ImageCompressor(object):
             while block_y_coord + N <= l_lim:
                 block_x_coord = 0
                 while block_x_coord + N <= w_lim:
-                    #Take the average color value of each block and substitute values around the block by the average.
+                    #Take the average color value of each block and substitute values around the block by its average.
                     pixel_matrix[channel][block_y_coord:block_y_coord + N,block_x_coord:block_x_coord + N] = round(np.mean(pixel_matrix[channel][block_y_coord:block_y_coord + N,block_x_coord:block_x_coord + N]))
                     block_x_coord+=N
                 block_y_coord+=N
